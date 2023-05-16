@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="全新的松山高中，有溫度的幸福官網"/><!--網站簡介描述-->
+    <meta name="keywords" content="台北市,信義區,松山,高中,市立高中,松山高中,sssh"/><!--網站搜尋標籤-->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>臺北市立松山高級中學</title>
+<link href="images/icon.png" rel="shortcut icon"><!--tab上的圖-->
+<script src="http://code.jquery.com/jquery-3.1.1.min.js" async=false></script>
+<!-- Import the associated firebase lib which the order is fixed. -->
+<script defer src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.0.1/firebase-storage.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+<!-- Set the firebsae config and initialize it. -->
+<script defer src="RTBfirebase.js"></script>
+<script defer src="main.js"></script>
+<style>
+  @font-face{
+    font-family: subtitle;/*定義內文字體*/
+    src:url(fonts/SourceHanSansTW-Medium.otf);
+    font-weight:bolder;
+  }
+
+  @font-face{
+    font-family: bigtitle;/*定義標題字體*/
+    src:url(fonts/SourceHanSerifTW-Medium.otf),
+    local("Arial");
+  }
+
+  @font-face{
+  font-family: article;/*定義標題字體*/
+  src:url(fonts/jf-openhuninn-1.1.ttf),
+  local("Arial") ;
+  }
+
+  @font-face{
+  font-family: menufont;/*定義標題字體*/
+  src:url(fonts/Yozai-Medium.ttf),
+  local("Arial") ;
+  }
+  
+hr{
+  visibility: hidden;
+}  
+li{
+  list-style-type: none;
+}  
+.center{
+  position: fixed;
+  width:100%;
+  top:0;
+  outline: none;
+  background-color:darkcyan;
+  z-index:20;
+  text-align: center;
+  height: 15vh;
+  margin: 0%;
+  box-shadow: 2px 0px 10px;
+}
+/*側欄相關*/
+body{
+  padding: 0;
+  margin:0;
+  list-style-type: none;
+}
+.sidemenu>a{/*這裡前面要加上.sidemenu> 不然會不起作用*/
+  text-decoration:none;
+  list-style:none;
+  color:DarkCyan;
+  font-size: 2vw;
+  font-family: menufont;
+  transition: 0.5s;/*放慢動畫*/
+}
+.sidemenu>a:hover{
+  color:black;
+  text-shadow: 0.2em 0.2em 0.2em dimgray;
+  text-decoration:none;
+  transition: 0.5s;
+  position: relative;
+  transform: scale(1.25);
+}
+.sidemenu{
+  display: flex;
+	flex-direction: column;
+  transform: translateX(-101%);
+  transition: 1.0s;
+  position:fixed;
+  height:100%;
+  width:25vw;
+  background-color: #56ebd2;
+  justify-content: center;
+  align-items: center; 
+  text-align: center;
+  z-index: 100;
+}
+#check:checked ~ .sidemenu{
+  transform: translateX(0);
+}
+.menu{ 
+  position: fixed;
+  top:24px;
+  left: 24px;
+  transition: 1s;
+  z-index:21;
+  color: black;
+  font-size:7vh;
+}
+#check:checked + .menu{
+  transform: translate(-100%);
+}
+input{
+  display: none;
+  z-index: -1000;
+}
+div > a{
+  margin:5%;
+}
+.abc{
+  position:relative;
+  margin-left:-235%;
+  margin-bottom:-100%;
+  transition: 1s;
+  width: 10vw;
+  transform: rotate(-45deg);
+}
+.abc:hover{
+  margin-left: -25%;
+  transform: rotate(0deg);
+  margin-bottom:0%;
+  transition: 0.75s;
+}
+/*內文寬度*/.field li {
+  width:27.33333%;
+  margin-left: 1%;
+  margin-right:1%;
+  float: left;
+  border-style: solid;
+  padding: 1%;
+  height:44vh;
+  overflow: hidden;
+  margin-bottom: 30vh;
+  /*text-overflow: ellipsis;*/
+  cursor: pointer;
+  background-color: transparent;
+  margin-top: 5vh;
+  transition: 0.3s;
+  border-radius: 1vh;
+}
+.field li:first-child{
+  margin-left: 5%;
+}
+.field li:last-child{
+  margin-right: 7%;
+}
+.field{
+  margin-bottom: 8;
+}
+/*主網頁內文樣式*/.field>ul>li p{
+  text-align:left !important;
+  font-family: article;
+  font-size:1.5vw;
+  line-height: 2;
+  color: white;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
+  margin-top: 0.8vh;
+}
+.field li:hover {
+  cursor: pointer;
+  transition: 0.9s;
+  opacity: 1;
+  transform: scale(1.2);
+  box-shadow: 1.2vh 1vh 3vh 0.5vh rgb(53, 52, 52);
+}
+/*主網頁內文小標題*/.field>ul>li f{
+  font-size:2vw;
+  text-align:left !important;
+  font-weight:bold;
+  color: darkcyan;
+  font-family:subtitle;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+body{/*背景*/
+  font-family:article;
+  background-color: #000!important;
+  background-image:linear-gradient(to left, rgba(0,0,0,0.7), 
+rgba(0, 0, 0, 0.9)),url("images/icon background.png");
+  background-repeat: no-repeat;
+  background-position: bottom 0% left 0%;
+  background-attachment:scroll;
+  background-size: 25%;
+}
+
+ul div{
+  display:flex;
+  flex-direction: row;
+}
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  font-size: 100%;
+  border: none;
+  outline: none;
+  background-color: rgba(0, 0, 0, .0);
+  color: white;
+  cursor: pointer;
+  padding: 1.2vh;
+  border-radius: 4px;
+  font-family:article;
+}
+
+#myBtn:hover {
+  background-color: #55555555;/*滑過top按鈕顏色*/
+  cursor:pointer;
+  color:#56ebd2;
+}
+
+#pls{
+  transition: margin-left 0.6s;
+}
+.contact{
+  position:fixed;
+  right:5.5vh;
+  height:20vh;
+  writing-mode: vertical-rl;
+  transform: scale(-1);
+  letter-spacing: 0.7vh;
+  z-index:1;
+  top:55vh;
+  color: white;
+}
+.gmail{
+  top:45vh;
+  position:fixed;
+  right:3vh;
+  transform: scale(0.7) rotate(270deg);
+  cursor: pointer;
+}
+.youtube{
+  position:fixed;
+  top:35vh;
+  right:3vh;
+  transform:scale(0.7) rotate(270deg);
+  cursor: pointer;
+}
+.marquee{
+  z-index:2;
+}
+
+.main-footer{
+  padding: 150px 0 0;
+}
+.main-footer .container{
+  display: flex;
+  width: 1080px;
+  margin: 1080px;
+  background-color: dimgray;
+
+}
+
+.footer-item{
+  flex-grow: 1;
+  margin: 0vw 10vh;
+  display: inline-block;
+}
+.footer-item>h3{
+  font-family: article;
+  color: white;
+}
+.footer-item nav{
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-item>nav>a{
+  padding: 0;
+  text-decoration: none;
+  line-height: 2;
+  font-family: subtitle;
+  color: white;
+  font-size: 125%;
+}
+.titlelink{
+  text-decoration: none;
+  font-family: bigtitle;
+  color: white;
+  font-size: 3.2vw;
+  transition: 0.5s;
+}
+.titlelink:hover{
+  color: darkcyan;
+}
+.titlelink::after{
+  content:"";
+  display:block;
+  width: 0;
+  height: 4px;
+  background-color: darkcyan;
+  position:absolute;
+  right: 82%;
+  transition:.5s;
+}
+.titlelink:hover::after{
+  width: 13%;
+  left: 5%;
+}
+
+</style>
+</head>
+<body>
+
+  <div id="spinner">
+    <!--这里是动画内容-->
+  </div>
+  <script>
+    // 1. 记录页面打开时间
+  var startTime = new Date().getTime();
+  
+  window.onload = function(){
+      // 2. 计算时间差
+      var timeSpan = new Date().getTime() - startTime;
+      
+      // 3. 判断时差
+      if(timeSpan >= 3000) {
+  
+          // 大于3秒结束动画
+  
+      } else {
+  
+          // 小于3秒用定时器延迟处理
+          setTimeout(function(){
+              //...
+          }, 3000 - timeSpan);
+  
+      }
+       
+  }
+  
+  /*作者：王昱森
+  链接：https://www.zhihu.com/question/21720214/answer/105551436
+  来源：知乎
+  著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。*/
+  </script>
+
+
+  <div class="center" id="mytitle"><a herf="index.html"><img src="images/bigtitle.png"height=100%></a></div>
+  <div>
+    <input type="checkbox" id="check">
+  <label for="check"  class="menu">
+    <div style="cursor:pointer;font-size: 45px;"alt="選單" title="選單" aria-label="選單">&#9776;</div>
+  </label>
+  <div class="sidemenu">
+      <div>
+        <a href="https://newssshwebsite-tk.translate.goog/?_x_tr_sl=zh-TW&_x_tr_tl=en&_x_tr_hl=zh-TW&_x_tr_pto=wapp"><img src="icon_earth.png" width="15%" alt="EN" title="EN" aria-label="EN"></a>
+      </div>
+
+    <a href="#a1">最新消息News</a>
+    <a href="#a2">行政處室Unit</a>
+    <a href="#a3">關於松高About</a>
+    <a href="#a4">崧人捷徑Shortcut</a>
+    <a href="#a5">網站地圖Map</a>
+    <a href="#a6">聯絡我們Contact Us</a>
+    <label for="check">
+      <img class=abc style="cursor:pointer;" href="javascript:void(0)" src="icon_close S250.png"alt="關閉" title="關閉" aria-label="關閉"><!--這個是關閉的符號-->
+    </label>
+  </div>
+<body>
+  <div>
+
+    <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>跑馬燈</title>
+    
+      <!-- Latest compiled and minified CSS -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+      <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    </head>
+    <body>
+      <div id="carouselExampleIndicators" class="carousel slide marquee" data-bs-ride="true">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="images/runpicture1.webp" class="d-block w-100" alt="校門街道" title="校門街道" aria-label="校門街道">
+          </div>
+          <div class="carousel-item">
+            <img src="images/runpicture2.webp" class="d-block w-100" alt="校門" title="校門" aria-label="校門">
+          </div>
+          <div class="carousel-item">
+            <img src="images/runpicture3.webp" class="d-block w-100" alt="柳絮紛飛" title="柳絮紛飛" aria-label="柳絮紛飛">
+          </div>
+          <div class="carousel-item">
+            <img src="images/runpicture4.webp" class="d-block w-100" alt="川堂" title="川堂" aria-label="川堂">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </body>
+</div>
+<a href="link_news.html" id="a1"class="titlelink">最新消息</a>
+<section1 class="field">
+  <ul>
+    <li>
+      <f id="title1"></f>
+      <p id="txt1"></p>
+    </li>
+    <li>
+      <f>111學年度第1學期第16週班級通報</f>
+      <p>
+      訓育組<br>
+      <img src="https://www.sssh.tp.edu.tw/ischool/resources/WID_17_2_b4e5eccbc1888a25070862d94f8fe7e1a7402c9d/NEWS_17_2_1caa961ef9f942678b55ffa6b93a2cd44387824e/cfcfe48f54863776f1257d5bdeaaf92f.jpg" width="250"><br>
+    </li>
+    <li>
+      <f>111-2第一次膳食委員會會議紀錄公告</f>
+      <p>
+        111年3月2日(四)16:00召開111-2第一次膳食委員會
+        
+        111-2第一次膳食委員會會議記錄連結
+        111-2第一次膳食委員會會議議程及附件連結
+        
+        依來函，請學生、家長、老師三方共同研商討論後續處理辦法及環保署的減塑政策。
+        依112年2月22日北市教體字第11230155432號函主旨有關「校園開放外食訂購」請妥善與校內師生溝通凝聚共識。各校可因地制宜自行決定是否開放外食訂購為降低開放所衍生之相關情事，以下作法供各校依循及參考：
+        
+        (一)開放外食訂購部分，學校規劃應留意幾個面向，如外送員停等區域、垃圾環保、衛生問題等，可傾聽學生、家長及老師們意見，並作好自主管理，如不開放，請學校與學生理性對話，並鼓勵學生多參與學校公共事務。
+        
+        (二)學校面對開放外食訂購，宜輔以衛生單位提供的優良商家名單擇要選取，並教導學生辨識營養標示及注重營養 .均衡飲食，讓學生在訂購外食時能夠注重其安全與衛生。
+        
+        (三)有關外食的廚餘回收，請學生、家長及老師三方共同研商討論後續處理辦法及留意環保署的減塑政策</p>
+    </li>
+  </ul>
+  </section1>
+  <br>
+  <br>
+<a href="link_unit.html" id="a2"class="titlelink">行政處室</a>
+  <section1 class="field">
+    <ul>
+      <li>
+        <f>學務處</f>
+        <p></p>
+      </li>
+      <li>
+        <f>教務處</f>
+        <p></p>
+      </li>
+      <li>
+        <f>總務處</f>
+        <p></p>
+      </li>
+    </ul>
+    </section1>
+<a href="link_about.html" id="a3"class="titlelink">關於松高</a>
+<section1 class="field">
+  <ul>
+    <li>
+      <f></f>
+      <p></p>
+    </li>
+    <li>
+      <f></f>
+      <p></p>
+    </li>
+    <li>
+      <f></f>
+      <p></p>
+    </li>
+  </ul>
+  </section1>
+<hr size="3px" text-align="center" width="100%">
+<a href="link_connect.html" id="a4"class="titlelink">崧人捷徑</a>
+<hr size="3px" text-align="center" width="100%">
+<a href="link_map.html" id="a5"class="titlelink">網站地圖</a>
+<hr size="3px" text-align="center" width="100%">
+<button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+<br><a href="readme.txt" style="text-decoration:none;color: #000;font-family: article;">更新註記</a><br>
+<br>
+<script>
+let mybutton = document.getElementById("myBtn");
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    mybutton.style.display = "block";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+//以下為標題隱藏動畫
+let mytitle = document.getElementById("center");
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction2()};
+}
+function scrollFunction2() {
+  if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+    mytitle.style.display = "block";
+  } else {
+    mytitle.style.display = "none";
+  }
+}
+</script>
+
+ <br><br>
+
+<div class="main footer">
+  <div class="footer-item">
+    <h3>最新消息News</h3>
+    <nav>
+      <a href="link_news.html">最新消息News</a>
+    </nav>
+
+  </div>
+  <div class="footer-item">
+    <h3>行政處室Unit</h3>
+    <nav>
+      <a href="#">＞學務處</a>
+      <a href="#">＞教務處</a>
+      <a href="#">＞輔導室</a>
+      <a href="#">＞總務處</a>
+      <a href="#">＞校長室</a>
+      <a href="#">＞各科系辦公室</a>
+    </nav>
+
+  </div>
+  <div class="footer-item">
+    <h3>關於松高About</h3>
+    <nav>
+      <a href="#">＞學校歷史</a>
+      <a href="#">＞校園環境</a>
+      <a href="#">＞交通位置</a>
+      <a href="#">＞課程特色</a>
+      <a href="#">＞各項活動</a>
+    </nav>
+
+  </div>
+  <div class="footer-item">
+    <h3>崧人捷徑Connect</h3>
+    <nav>
+      <a href="https://www.sssh.tp.edu.tw/home"target="_blank">＞松山高中正式官網</a>
+      <a href="https://sschool.tp.edu.tw/Login.action?schNo=323301"target="_blank">＞二代校務行政系統</a>
+      <a href="https://e-portfolio.cooc.tp.edu.tw/"target="_blank">＞學習歷程檔案系統</a>
+      <a href="http://203.72.64.251/classtable/classtable.asp">＞松山高中線上課表查詢系統</a>
+      <a href="https://ldap.tp.edu.tw/"target="_blank">＞台北市單一身分驗證服務</a>
+      <a href="https://www.ssshmap.tk/"target="_blank">＞崧高地圖小幫手</a>
+      <a href=" http://course.sssh.tp.edu.tw:8080/moodle/"target="_blank">＞松山高中數位課程學習平台</a>
+    </nav>
+
+  </div>
+  <div class="footer-item">
+    <h3>網站地圖Map</h3>
+    <nav>
+      <a href="#">＞無障礙指引</a>
+      <a href="#">＞總目錄</a>
+      <a href="view-source:https://newssshwebsite.tk" target="_blank">＞原始碼</a>
+    </nav>
+
+  </div>
+  <div class="footer-item">
+    <h3>聯絡我們Contact</h3>
+    <nav>
+      <a href="#">聯絡我們Contact</a>
+    </nav>
+  </div>
+  <div class="footer-item">
+    <h3>版權聲明</h3>
+    <nav>
+      <a href="#">copyright &copy; 2022-2023<br>松山高中學生校網重建計畫<br>34th阿中 小黃 希希 版權所有</a>
+    </nav>
+  </div>
+    
+</div>
+
+<a href="mailto:school@sssh.tp.edu.tw" target="_blank" rel="noreferrer noopenner"><img src="images/gmail.png" class="gmail"></a>
+<a href="https://www.youtube.com/channel/UC1dulcWt0xd_hqsDapgPQ4A" target="_blank" rel="noreferrer noopenner"><img src="images/youtube.png" class="youtube"></a>
+<div class="contact">contact us</div>
+
+</body>
+</html>
