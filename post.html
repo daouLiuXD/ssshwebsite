@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <head>
+        <meta charset="UTF-8">
+        <title>松山校網發布頁</title>
+        <!-- Import the associated firebase lib which the order is fixed. -->
+        <script defer src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+        <script defer src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
+        <script defer src="https://www.gstatic.com/firebasejs/8.0.1/firebase-storage.js"></script>
+        <script defer src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+        <!-- Set the firebsae config and initialize it. -->
+        <script defer src="RTBfirebase.js"></script>
+    </head>
+    <body>
+        <h1>松山高中新版官網發布頁</h1>
+        <h2>發布最新消息</h2>
+        <p>標題</p>
+        <input type="text" id="title">請輸入標題</input >
+        <p>發布內容</p>
+        <textarea id="content" rows="10"></textarea>
+        <button id="postbtn">發布</button>
+        <div id="list">
+            <div class="article">
+            <h3>測試測試</h3>
+            <p>就跟你說我在測試了</p>
+            </div>
+        </div>
+        <script src="post.js"></script>
+    </body>
+    
+</html>
